@@ -5,7 +5,7 @@ import sys
 # Function to install missing libraries
 def install_package(package):
     try:
-        subprocess.check_call([sys.executable, "-m", "pip3", "install", package])
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
     except subprocess.CalledProcessError:
         print(f"Failed to install {package}. Please try manually.")
 
